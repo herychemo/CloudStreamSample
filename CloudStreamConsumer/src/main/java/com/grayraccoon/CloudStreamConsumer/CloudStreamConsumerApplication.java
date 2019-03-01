@@ -1,6 +1,7 @@
 package com.grayraccoon.CloudStreamConsumer;
 
 import com.grayraccoon.CloudStreamConsumer.channels.ConsumerChannels;
+import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @SpringBootApplication
@@ -29,6 +31,8 @@ public class CloudStreamConsumerApplication {
 	@Bean
 	public IntegrationFlow integrationFlow(ConsumerChannels c, Logger logger) {
 		return IntegrationFlows.from(c.producer())
+				.filter(Objects::nonNull)
+				.transform(String.class, WordUtils::capitalizeFully)
 				.handle(String.class, (payload, messageHeaders) -> {
 					logger.info("new message: " + payload);
 					return null;
