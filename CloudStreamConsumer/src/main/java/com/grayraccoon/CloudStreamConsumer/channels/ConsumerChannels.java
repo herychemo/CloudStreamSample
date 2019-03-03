@@ -5,7 +5,9 @@ import org.springframework.messaging.SubscribableChannel;
 
 public interface ConsumerChannels {
 
-    @Input
-    SubscribableChannel producer();
+    String ProducerChannel = "producerMessageChannel";
+
+    @Input(value = ConsumerChannels.ProducerChannel)
+    SubscribableChannel producerMessageChannel();
 
 }

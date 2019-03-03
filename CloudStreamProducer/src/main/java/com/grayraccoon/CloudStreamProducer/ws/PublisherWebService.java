@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ws")
 public class PublisherWebService {
 
-    private final MessageChannel consumer;
+    private final MessageChannel consumerMessageChannel;
 
     @Autowired
     public PublisherWebService(ProducerChannels channels) {
-        this.consumer = channels.consumer();
+        this.consumerMessageChannel = channels.consumerMessageChannel();
     }
 
     @PostMapping("/greet/{name}")
@@ -28,9 +28,13 @@ public class PublisherWebService {
         Message<String> msg = MessageBuilder
                 .withPayload(greeting)
                 .build();
-        this.consumer.send(msg);
+         boolean isSent = this.consumerMessageChannel.send(msg);
 
-        return "greeting sent...";
+        if (isSent) {
+            return "greeting sent...";
+        }else {
+            return "greeting failed...";
+        }
     }
 
 

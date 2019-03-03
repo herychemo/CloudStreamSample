@@ -28,9 +28,16 @@ public class CloudStreamConsumerApplication {
 		return Logger.getLogger(ip.getDeclaredType().getName());
 	}
 
+	/*
+	@StreamListener(ConsumerChannels.ProducerChannel)
+	public void simpleConsumer(String data) {
+		System.out.print("Without processing: " + data );
+	}
+	*/
+
 	@Bean
 	public IntegrationFlow integrationFlow(ConsumerChannels c, Logger logger) {
-		return IntegrationFlows.from(c.producer())
+		return IntegrationFlows.from(c.producerMessageChannel())
 				.filter(Objects::nonNull)
 				.transform(String.class, WordUtils::capitalizeFully)
 				.handle(String.class, (payload, messageHeaders) -> {
@@ -39,6 +46,5 @@ public class CloudStreamConsumerApplication {
 				})
 				.get();
 	}
-
 
 }
